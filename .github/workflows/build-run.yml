@@ -33,6 +33,8 @@ jobs:
       - name: Build
         run: |
           ./gradlew clean build
-      - name: run
+      - name: Run
+        env:
+          GOOGLE_SHEET_XLSX_URL: ${{ secrets.GOOGLE_SHEET_XLSX_URL }}
         run: |
-          ./gradlew run -DGOOGLE_SHEET_XLSX_URL=${{ secrets.GOOGLE_SHEET_XLSX_URL }}
+          ./gradlew run

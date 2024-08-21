@@ -4,8 +4,6 @@ val logstashEncoderVersion = "8.0"
 val poiVersion = "5.3.0"
 val jacksonVersion = "2.17.2"
 
-val githubUser: String by project
-
 plugins {
     id("application")
     kotlin("jvm") version "2.0.10"
