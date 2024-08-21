@@ -18,7 +18,7 @@ java -version
 ### Running the application locally
 
 #### Building the application
-Need to set an environment variable GOOGLE_SHEET_XLSX_URL to current google sheet bashrc example:
+Need to set an environment variable GOOGLE_SHEET_XLSX_URL to current google sheet .bashrc example:
 ``` shell bash
 export GOOGLE_SHEET_XLSX_URL='https://docs.google.com/spreadsheets/d/12312454123123/export?format=xlsx#gid=0'
 ```
@@ -28,7 +28,7 @@ To build locally
 ./gradlew clean build
 ```
 
-To run, you can simply run this command can skip -D if environment variable is set
+To run, you can simply run this
 ``` shell bash
 ./gradlew run
 ```
