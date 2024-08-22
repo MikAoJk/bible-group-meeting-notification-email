@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory
 import java.net.HttpURLConnection
 import java.net.URI
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 
 
 val log: Logger = LoggerFactory.getLogger("mikaojk.github.io")
@@ -28,8 +30,13 @@ val objectMapper: ObjectMapper =
     }
 
 fun main() {
-   val bibleGroupMeetings =  fetchBibleGroupMeetingFromGoogleSheets()
-    // TODO add in notify with email?
+    val bibleGroupMeetings = fetchBibleGroupMeetingFromGoogleSheets()
+    val nearestFutureBibelGroupMeeting = nearestFutureBibelGroupMeeting(bibleGroupMeetings)
+    if (nearestFutureBibelGroupMeeting != null) {
+        emailNotify()
+    } else {
+        log.info("No bible group meeting in scheduled")
+    }
 }
 
 data class BibleGroupMeeting(
@@ -38,6 +45,18 @@ data class BibleGroupMeeting(
     val address: String,
     val theme: String
 )
+
+fun nearestFutureBibelGroupMeeting(bibelgroupmeetings: List<BibleGroupMeeting>): BibleGroupMeeting? {
+    val currentDay = LocalDate.now()
+
+    return bibelgroupmeetings
+        .filter { it.date.isAfter(currentDay) }
+        .minByOrNull {
+            abs(ChronoUnit.DAYS.between(it.date, currentDay))
+        }
+
+}
+
 
 fun fetchBibleGroupMeetingFromGoogleSheets(): List<BibleGroupMeeting> {
 
@@ -91,4 +110,8 @@ fun Cell.getStringValue(): String {
             ""
         }
     }
+}
+
+fun emailNotify() {
+ //TODO
 }
