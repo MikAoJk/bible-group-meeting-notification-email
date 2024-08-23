@@ -30,7 +30,7 @@ fun main() {
     val emails: List<String> = environment.emails.trim().split(",")
 
     if (nearestFutureBibelGroupMeeting != null) {
-        emailNotify(environment.sendgridApiKey, emails, nearestFutureBibelGroupMeeting)
+       emailNotify(environment.sendgridApiKey, emails, nearestFutureBibelGroupMeeting)
     } else {
         log.info("No bible group meeting in scheduled")
     }
@@ -113,7 +113,7 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>,bibelgroupmee
 
     emailAdresss.forEach { email ->
         val from = Email("joakim@joakim-taule-kartveit.no")
-        val subject = "Bibelgruppe påminnelse"
+        val subject = "Bibelgruppe den ${bibelgroupmeeting.date.format(dateFormatt)} påminnelse"
         val to = Email(email)
         val content = Content("text/plain", "Husk at det er bibelgruppe på onsdag den ${bibelgroupmeeting.date.format(dateFormatt)}, hos ${bibelgroupmeeting.who}, adresse:" +
                 "${bibelgroupmeeting.address}, kl: 19:30")
@@ -129,7 +129,7 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>,bibelgroupmee
         val response = sg.api(request)
 
         if (response.statusCode != 202) {
-            log.info("Something whent wrong with sending the email")
+            log.info("Something went wrong with sending the email")
             log.info("Status code ${response.statusCode}")
             log.info("body code ${response.body}")
         } else {
