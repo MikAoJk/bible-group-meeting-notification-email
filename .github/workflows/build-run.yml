@@ -39,5 +39,6 @@ jobs:
       - name: Run
         env:
           GOOGLE_SHEET_XLSX_URL: ${{ secrets.GOOGLE_SHEET_XLSX_URL }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         run: |
           ./gradlew run

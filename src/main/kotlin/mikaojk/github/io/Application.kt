@@ -5,6 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.sendgrid.Method
+import com.sendgrid.Request
+import com.sendgrid.SendGrid
+import com.sendgrid.helpers.mail.Mail
+import com.sendgrid.helpers.mail.objects.Content
+import com.sendgrid.helpers.mail.objects.Email
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Sheet
@@ -30,10 +36,11 @@ val objectMapper: ObjectMapper =
     }
 
 fun main() {
-    val bibleGroupMeetings = fetchBibleGroupMeetingFromGoogleSheets()
+    val environment = Environment()
+    val bibleGroupMeetings = fetchBibleGroupMeetingFromGoogleSheets(environment.googleSheetXlsxUrl)
     val nearestFutureBibelGroupMeeting = nearestFutureBibelGroupMeeting(bibleGroupMeetings)
     if (nearestFutureBibelGroupMeeting != null) {
-        emailNotify()
+        emailNotify(environment.sendgridApiKey)
     } else {
         log.info("No bible group meeting in scheduled")
     }
@@ -58,12 +65,11 @@ fun nearestFutureBibelGroupMeeting(bibelgroupmeetings: List<BibleGroupMeeting>):
 }
 
 
-fun fetchBibleGroupMeetingFromGoogleSheets(): List<BibleGroupMeeting> {
+fun fetchBibleGroupMeetingFromGoogleSheets(googleSheetXlsxUrl: String): List<BibleGroupMeeting> {
 
-    val environment = Environment()
 
     val bibleGroupMeetingsGoogleSheetUrl =
-        URI.create(environment.googleSheetXlsxUrl)
+        URI.create(googleSheetXlsxUrl)
             .toURL().openConnection() as HttpURLConnection
 
     val bibleGroupMeetingsWorkbook: Workbook = XSSFWorkbook(bibleGroupMeetingsGoogleSheetUrl.inputStream)
@@ -112,6 +118,26 @@ fun Cell.getStringValue(): String {
     }
 }
 
-fun emailNotify() {
- //TODO
+fun emailNotify(sendgridApiKey: String) {
+    val from = Email("joakim@joakim-taule-kartveit.no")
+    val subject = "Sending with Twilio SendGrid is Fun"
+    val to = Email("joakimkartveit@gmail.com")
+    val content = Content("text/plain", "and easy to do anywhere, even with Java")
+    val mail = Mail(from, subject, to, content)
+    val sg = SendGrid(sendgridApiKey)
+    val request: Request = Request().apply {
+        method = Method.POST
+        endpoint = "mail/send"
+        body = mail.build()
+    }
+
+    val response = sg.api(request)
+
+    if (response.statusCode != 202) {
+        log.info("Something whent wrong with sending the email")
+        log.info("Status code ${response.statusCode}")
+        log.info("body code ${response.body}")
+    }
+
+    log.info("All good, email is sendt")
 }
