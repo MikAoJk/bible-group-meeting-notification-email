@@ -18,9 +18,15 @@ java -version
 ### Running the application locally
 
 #### Building the application
-Need to set an environment variable GOOGLE_SHEET_XLSX_URL to current google sheet .bashrc example:
+Need to set an environment variables
+GOOGLE_SHEET_XLSX_URL to current google sheet
+SENDGRID_API_KEY to api key from sendgrip
+EMAILS_TO_NOTIFY to the emails you want to send to
+.bashrc example:
 ``` shell bash
 export GOOGLE_SHEET_XLSX_URL='https://docs.google.com/spreadsheets/d/12312454123123/export?format=xlsx#gid=0'
+export SENDGRID_API_KEY='supersecretkey'
+export EMAILS_TO_NOTIFY='joakimkartveit@gmail.com,joakimkartveit2@gmail.com'
 ```
 
 To build locally
@@ -36,7 +42,6 @@ or on windows
 ```
 gradlew.bat run
 ```
-
 
 ### Upgrading the gradle wrapper
 Find the newest version of gradle here: https://gradle.org/releases/ Then run this command:

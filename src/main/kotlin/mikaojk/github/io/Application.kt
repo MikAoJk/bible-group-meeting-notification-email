@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory
 import java.net.HttpURLConnection
 import java.net.URI
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
@@ -39,11 +40,14 @@ fun main() {
     val environment = Environment()
     val bibleGroupMeetings = fetchBibleGroupMeetingFromGoogleSheets(environment.googleSheetXlsxUrl)
     val nearestFutureBibelGroupMeeting = nearestFutureBibelGroupMeeting(bibleGroupMeetings)
+    val emails: List<String> = environment.emails.trim().split(",")
+
     if (nearestFutureBibelGroupMeeting != null) {
-        emailNotify(environment.sendgridApiKey)
+        emailNotify(environment.sendgridApiKey, emails, nearestFutureBibelGroupMeeting)
     } else {
         log.info("No bible group meeting in scheduled")
     }
+
 }
 
 data class BibleGroupMeeting(
@@ -118,26 +122,32 @@ fun Cell.getStringValue(): String {
     }
 }
 
-fun emailNotify(sendgridApiKey: String) {
-    val from = Email("joakim@joakim-taule-kartveit.no")
-    val subject = "Sending with Twilio SendGrid is Fun"
-    val to = Email("joakimkartveit@gmail.com")
-    val content = Content("text/plain", "and easy to do anywhere, even with Java")
-    val mail = Mail(from, subject, to, content)
-    val sg = SendGrid(sendgridApiKey)
-    val request: Request = Request().apply {
-        method = Method.POST
-        endpoint = "mail/send"
-        body = mail.build()
+fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>,bibelgroupmeeting: BibleGroupMeeting ) {
+
+    val dateFormatt = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
+    emailAdresss.forEach { email ->
+        val from = Email("joakim@joakim-taule-kartveit.no")
+        val subject = "Bibelgruppe påminnelse"
+        val to = Email(email)
+        val content = Content("text/plain", "Husk at det er bibelgruppe på onsdag den ${bibelgroupmeeting.date.format(dateFormatt)}, hos ${bibelgroupmeeting.who} kl: 19:30")
+        val mail = Mail(from, subject, to, content)
+
+        val sg = SendGrid(sendgridApiKey)
+        val request: Request = Request().apply {
+            method = Method.POST
+            endpoint = "mail/send"
+            body = mail.build()
+        }
+
+        val response = sg.api(request)
+
+        if (response.statusCode != 202) {
+            log.info("Something whent wrong with sending the email")
+            log.info("Status code ${response.statusCode}")
+            log.info("body code ${response.body}")
+        } else {
+            log.info("All good, email is sendt")
+        }
     }
-
-    val response = sg.api(request)
-
-    if (response.statusCode != 202) {
-        log.info("Something whent wrong with sending the email")
-        log.info("Status code ${response.statusCode}")
-        log.info("body code ${response.body}")
-    }
-
-    log.info("All good, email is sendt")
 }
