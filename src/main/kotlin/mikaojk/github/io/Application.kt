@@ -1,10 +1,5 @@
 package mikaojk.github.io
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.sendgrid.Method
 import com.sendgrid.Request
 import com.sendgrid.SendGrid
@@ -27,14 +22,6 @@ import kotlin.math.abs
 
 
 val log: Logger = LoggerFactory.getLogger("mikaojk.github.io")
-
-val objectMapper: ObjectMapper =
-    ObjectMapper().apply {
-        registerKotlinModule()
-        registerModule(JavaTimeModule())
-        configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
 
 fun main() {
     val environment = Environment()
@@ -100,8 +87,6 @@ fun fetchBibleGroupMeetingFromGoogleSheets(googleSheetXlsxUrl: String): List<Bib
 
     bibleGroupMeetingsGoogleSheetUrl.disconnect()
 
-    log.info("done mapping to data class, firse meeting date: ${objectMapper.writeValueAsString(bibleGroupMeetings[0].date)}")
-
     return bibleGroupMeetings
 }
 
@@ -130,7 +115,8 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>,bibelgroupmee
         val from = Email("joakim@joakim-taule-kartveit.no")
         val subject = "Bibelgruppe påminnelse"
         val to = Email(email)
-        val content = Content("text/plain", "Husk at det er bibelgruppe på onsdag den ${bibelgroupmeeting.date.format(dateFormatt)}, hos ${bibelgroupmeeting.who} kl: 19:30")
+        val content = Content("text/plain", "Husk at det er bibelgruppe på onsdag den ${bibelgroupmeeting.date.format(dateFormatt)}, hos ${bibelgroupmeeting.who} adresse:" +
+                "${bibelgroupmeeting.address} kl: 19:30")
         val mail = Mail(from, subject, to, content)
 
         val sg = SendGrid(sendgridApiKey)
