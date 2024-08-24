@@ -112,7 +112,7 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>,bibelgroupmee
     val dateFormatt = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
     emailAdresss.forEach { email ->
-        val from = Email("joakim@joakim-taule-kartveit.no")
+        val from = Email("no-reply@joakim-taule-kartveit.no")
         val subject = "Bibelgruppe den ${bibelgroupmeeting.date.format(dateFormatt)} påminnelse"
         val to = Email(email)
         val content = Content("text/plain", "Husk at det er bibelgruppe på onsdag den ${bibelgroupmeeting.date.format(dateFormatt)}, hos ${bibelgroupmeeting.who}, adresse:" +
