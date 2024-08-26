@@ -29,8 +29,9 @@ fun main() {
     val nearestFutureBibelGroupMeeting = nearestFutureBibelGroupMeeting(bibleGroupMeetings)
     val emails: List<String> = environment.emails.trim().split(",")
 
-    if (nearestFutureBibelGroupMeeting != null) {
-       emailNotify(environment.sendgridApiKey, emails, nearestFutureBibelGroupMeeting)
+
+    if (nearestFutureBibelGroupMeeting != null && isFutureBibelGroupMeetingNextWeek(nearestFutureBibelGroupMeeting.date)) {
+        emailNotify(environment.sendgridApiKey, emails, nearestFutureBibelGroupMeeting)
     } else {
         log.info("No bible group meeting in scheduled")
     }
@@ -43,6 +44,12 @@ data class BibleGroupMeeting(
     val address: String,
     val theme: String
 )
+
+fun isFutureBibelGroupMeetingNextWeek(bibelGroupMeetingdate: LocalDate): Boolean {
+    val currentDay = LocalDate.now()
+    val daysBetween = abs(ChronoUnit.DAYS.between(bibelGroupMeetingdate, currentDay))
+    return daysBetween < 7
+}
 
 fun nearestFutureBibelGroupMeeting(bibelgroupmeetings: List<BibleGroupMeeting>): BibleGroupMeeting? {
     val currentDay = LocalDate.now()
@@ -107,7 +114,7 @@ fun Cell.getStringValue(): String {
     }
 }
 
-fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>,bibelgroupmeeting: BibleGroupMeeting ) {
+fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>, bibelgroupmeeting: BibleGroupMeeting) {
 
     val dateFormatt = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
@@ -115,8 +122,11 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>,bibelgroupmee
         val from = Email("no-reply@joakim-taule-kartveit.no")
         val subject = "Bibelgruppe den ${bibelgroupmeeting.date.format(dateFormatt)} påminnelse"
         val to = Email(email)
-        val content = Content("text/plain", "Husk at det er bibelgruppe på onsdag den ${bibelgroupmeeting.date.format(dateFormatt)}, hos ${bibelgroupmeeting.who}, adresse:" +
-                "${bibelgroupmeeting.address}, kl: 19:30")
+        val content = Content(
+            "text/plain",
+            "Husk at det er bibelgruppe på onsdag den ${bibelgroupmeeting.date.format(dateFormatt)}, hos ${bibelgroupmeeting.who}, adresse:" +
+                    "${bibelgroupmeeting.address}, kl: 19:30"
+        )
         val mail = Mail(from, subject, to, content)
 
         val sg = SendGrid(sendgridApiKey)
