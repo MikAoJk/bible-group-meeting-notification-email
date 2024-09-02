@@ -122,10 +122,24 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>, bibelgroupme
         val from = Email("no-reply@joakim-taule-kartveit.no")
         val subject = "Bibelgruppe den ${bibelgroupmeeting.date.format(dateFormatt)} påminnelse"
         val to = Email(email)
+        val htmlContentStringFormat =
+            "<!DOCTYPE html>" +
+                    "<html lang=\"no\">" +
+                    "<head>" +
+                    "<title>Bibelgruppe den ${bibelgroupmeeting.date.format(dateFormatt)} påminnelse</title>" +
+                    "</head>" +
+                    "<body>Husk at det er bibelgruppe på onsdag!" +
+                    "<ul>" +
+                    "<li>Dato: ${bibelgroupmeeting.date.format(dateFormatt)}</li>" +
+                    "<li>Hos: ${bibelgroupmeeting.who}</li>" +
+                    "<li>Adresse: ${bibelgroupmeeting.address}</li>" +
+                    "<li>Kl: 19:30</li>" +
+                    "</ul>" +
+                    "</body>" +
+                    "</html>"
         val content = Content(
-            "text/plain",
-            "Husk at det er bibelgruppe på onsdag den: ${bibelgroupmeeting.date.format(dateFormatt)}, hos: ${bibelgroupmeeting.who}, adresse: " +
-                    "${bibelgroupmeeting.address}, kl: 19:30"
+            "text/html",
+            htmlContentStringFormat
         )
         val mail = Mail(from, subject, to, content)
 
