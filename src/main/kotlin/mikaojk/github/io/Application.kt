@@ -124,7 +124,7 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>, bibelgroupme
         val to = Email(email)
         val content = Content(
             "text/plain",
-            "Husk at det er bibelgruppe på onsdag den ${bibelgroupmeeting.date.format(dateFormatt)}, hos ${bibelgroupmeeting.who}, adresse:" +
+            "Husk at det er bibelgruppe på onsdag den: ${bibelgroupmeeting.date.format(dateFormatt)}, hos: ${bibelgroupmeeting.who}, adresse: " +
                     "${bibelgroupmeeting.address}, kl: 19:30"
         )
         val mail = Mail(from, subject, to, content)
