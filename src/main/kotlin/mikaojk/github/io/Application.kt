@@ -29,17 +29,12 @@ fun main() {
     val nearestFutureBibelGroupMeeting = nearestFutureBibelGroupMeeting(bibleGroupMeetings)
     val emails: List<String> = environment.emails.trim().split(",")
 
-    log.info("Hello")
 
-
-    /*
     if (nearestFutureBibelGroupMeeting != null && isFutureBibelGroupMeetingNextWeek(nearestFutureBibelGroupMeeting.date)) {
         emailNotify(environment.sendgridApiKey, emails, nearestFutureBibelGroupMeeting)
     } else {
         log.info("No bible group meeting in scheduled")
     }
-
-     */
 
 }
 
