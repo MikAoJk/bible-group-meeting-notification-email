@@ -134,6 +134,7 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>, bibelgroupme
                     "<li>Hos: ${bibelgroupmeeting.who}</li>" +
                     "<li>Adresse: ${bibelgroupmeeting.address}</li>" +
                     "<li>Kl: 19:30</li>" +
+                    "<li>Tema: ${bibelgroupmeeting.theme}</li>" +
                     "</ul>" +
                     "</body>" +
                     "</html>"
