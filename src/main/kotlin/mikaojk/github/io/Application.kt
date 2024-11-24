@@ -42,7 +42,8 @@ data class BibleGroupMeeting(
     val date: LocalDate,
     val who: String,
     val address: String,
-    val theme: String
+    val theme: String,
+    val bibleVerse: String
 )
 
 fun isFutureBibelGroupMeetingNextWeek(bibelGroupMeetingdate: LocalDate): Boolean {
@@ -87,7 +88,8 @@ fun fetchBibleGroupMeetingFromGoogleSheets(googleSheetXlsxUrl: String): List<Bib
                 date = row.getCell(0).localDateTimeCellValue.toLocalDate(),
                 who = row.getCell(1).getStringValue(),
                 address = row.getCell(2).getStringValue(),
-                theme = row.getCell(3).getStringValue()
+                theme = row.getCell(3).getStringValue(),
+                bibleVerse = row.getCell(4).getStringValue()
             )
         }
         .toList()
@@ -135,6 +137,7 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>, bibelgroupme
                     "<li>Adresse: ${bibelgroupmeeting.address}</li>" +
                     "<li>Kl: 19:30</li>" +
                     "<li>Tema: ${bibelgroupmeeting.theme}</li>" +
+                    "<li>Bibelvers: ${bibelgroupmeeting.bibleVerse}</li>" +
                     "</ul>" +
                     "</body>" +
                     "</html>"
