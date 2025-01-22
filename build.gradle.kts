@@ -1,12 +1,14 @@
-val kotlinVersion = "2.0.20"
+val kotlinVersion = "2.1.0"
 val logbackVersion= "1.5.6"
 val logstashEncoderVersion = "8.0"
 val poiVersion = "5.3.0"
-val sendgridVersion = "4.10.2"
+val sendgridVersion = "4.10.3"
+val junitJupiterVersion = "5.11.4"
+
 
 plugins {
     id("application")
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm") version "2.1.0"
 }
 
 group = "mikaojk.github.io"
@@ -14,6 +16,10 @@ version = "0.0.1"
 
 application {
     mainClass.set("mikaojk.github.io.ApplicationKt")
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 repositories {
@@ -26,4 +32,23 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+
+tasks {
+
+    withType<Test> {
+        useJUnitPlatform {}
+        testLogging {
+            showStandardStreams = true
+            showStackTraces = true
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        }
+    }
+
+
+
 }
