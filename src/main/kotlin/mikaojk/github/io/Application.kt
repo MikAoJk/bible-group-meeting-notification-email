@@ -85,7 +85,7 @@ fun fetchBibleGroupMeetingFromGoogleSheets(googleSheetXlsxUrl: String): List<Bib
         .filter { !it.getCell(0).getStringValue().matches(Regex("")) }
         .map { row ->
             BibleGroupMeeting(
-                date = row.getCell(0).localDateTimeCellValue.toLocalDate(),
+                date = row.getCell(0).getStringValue().toLocalDate(),
                 who = row.getCell(1).getStringValue(),
                 address = row.getCell(2).getStringValue(),
                 theme = row.getCell(3).getStringValue(),
@@ -97,6 +97,10 @@ fun fetchBibleGroupMeetingFromGoogleSheets(googleSheetXlsxUrl: String): List<Bib
     bibleGroupMeetingsGoogleSheetUrl.disconnect()
 
     return bibleGroupMeetings
+}
+
+fun String.toLocalDate(): LocalDate {
+    return LocalDate.parse(this, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 }
 
 fun Cell.getStringValue(): String {
