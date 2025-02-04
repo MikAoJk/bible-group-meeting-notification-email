@@ -107,7 +107,11 @@ fun Cell.getStringValue(): String {
 
     return when (this.cellType) {
         CellType.STRING -> {
-            this.stringCellValue.toString()
+            if (this.stringCellValue.isNullOrBlank()) {
+                ""
+            } else {
+                this.stringCellValue.toString()
+            }
         }
 
         CellType.NUMERIC -> {
