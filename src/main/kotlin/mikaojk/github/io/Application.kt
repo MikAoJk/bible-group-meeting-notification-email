@@ -43,7 +43,6 @@ data class BibleGroupMeeting(
     val who: String,
     val address: String,
     val theme: String,
-    val bibleVerse: String
 )
 
 fun isFutureBibelGroupMeetingNextWeek(bibelGroupMeetingdate: LocalDate): Boolean {
@@ -81,7 +80,6 @@ fun fetchBibleGroupMeetingFromGoogleSheets(googleSheetXlsxUrl: String): List<Bib
         .filter { !it.getCell(0).getStringValue().matches(Regex("Hos hvem")) }
         .filter { !it.getCell(0).getStringValue().matches(Regex("Adresse")) }
         .filter { !it.getCell(0).getStringValue().matches(Regex("Tema")) }
-        .filter { !it.getCell(0).getStringValue().matches(Regex("Bibelvers")) }
         .filter { !it.getCell(0).getStringValue().matches(Regex("")) }
         .map { row ->
             BibleGroupMeeting(
@@ -89,7 +87,6 @@ fun fetchBibleGroupMeetingFromGoogleSheets(googleSheetXlsxUrl: String): List<Bib
                 who = row.getCell(1).getStringValue(),
                 address = row.getCell(2).getStringValue(),
                 theme = row.getCell(3).getStringValue(),
-                bibleVerse = row.getCell(4).getStringValue()
             )
         }
         .toList()
@@ -145,7 +142,6 @@ fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>, bibelgroupme
                     "<li>Adresse: ${bibelgroupmeeting.address}</li>" +
                     "<li>Kl: 19:30</li>" +
                     "<li>Tema: ${bibelgroupmeeting.theme}</li>" +
-                    "<li>Bibelvers: ${bibelgroupmeeting.bibleVerse}</li>" +
                     "</ul>" +
                     "</body>" +
                     "</html>"
