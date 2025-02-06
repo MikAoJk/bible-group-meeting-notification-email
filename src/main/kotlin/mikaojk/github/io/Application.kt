@@ -29,8 +29,9 @@ fun main() {
     val nearestFutureBibelGroupMeeting = nearestFutureBibelGroupMeeting(bibleGroupMeetings)
     val emails: List<String> = environment.emails.trim().split(",")
 
+    val allEmailsAreValid = checkEmails(emails)
 
-    if (nearestFutureBibelGroupMeeting != null && isFutureBibelGroupMeetingNextWeek(nearestFutureBibelGroupMeeting.date)) {
+    if (allEmailsAreValid && nearestFutureBibelGroupMeeting != null && isFutureBibelGroupMeetingNextWeek(nearestFutureBibelGroupMeeting.date)) {
         emailNotify(environment.sendgridApiKey, emails, nearestFutureBibelGroupMeeting)
     } else {
         log.info("No bible group meeting in scheduled")
@@ -44,6 +45,22 @@ data class BibleGroupMeeting(
     val address: String,
     val theme: String,
 )
+
+fun checkEmails(emails: List<String>): Boolean {
+    for (email in emails) {
+        if (!validateEmail(email)) {
+            log.error("Invalid email: $email")
+            return false
+        }
+    }
+    return true
+}
+
+fun validateEmail(email: String): Boolean {
+    val emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$".toRegex()
+
+    return emailPattern.matches(email)
+}
 
 fun isFutureBibelGroupMeetingNextWeek(bibelGroupMeetingdate: LocalDate): Boolean {
     val currentDay = LocalDate.now()

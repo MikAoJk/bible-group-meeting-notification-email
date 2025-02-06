@@ -14,13 +14,45 @@ class ApplicationTest {
                 who = "Joakim",
                 address = "My house",
                 theme = "The Bible",
-                bibleVerse = "John 3:16"
             )
         )
 
         val isFutureBibelGroupMeetingNextWeek = isFutureBibelGroupMeetingNextWeek(nearestFutureBibelGroupMeeting(bibleGroupMeetings)!!.date)
 
         assertEquals(true, isFutureBibelGroupMeetingNextWeek)
+    }
+
+    @Test
+    fun `Should not be a bible group meeting 7 days from now`() {
+        val bibleGroupMeetings = listOf(
+            BibleGroupMeeting(
+                date = LocalDate.now().plusDays(7),
+                who = "Joakim",
+                address = "My house",
+                theme = "The Bible",
+            )
+        )
+
+        val isFutureBibelGroupMeetingNextWeek = isFutureBibelGroupMeetingNextWeek(nearestFutureBibelGroupMeeting(bibleGroupMeetings)!!.date)
+
+        assertEquals(false, isFutureBibelGroupMeetingNextWeek)
+    }
+
+    @Test
+    fun `Should check all emails and be valid`() {
+        val environment = Environment()
+        val emails: List<String> = environment.emails.trim().split(",")
+        val allEmailsAreValid = checkEmails(emails)
+
+        assertEquals(true, allEmailsAreValid)
+    }
+
+    @Test
+    fun `Should check all emails and find some invalids`() {
+        val emails: List<String> = listOf("joakim@gmai.com", "joaskim£gmail.com")
+        val allEmailsAreValid = checkEmails(emails)
+
+        assertEquals(false, allEmailsAreValid)
     }
 
 }
