@@ -6,6 +6,7 @@ import com.sendgrid.SendGrid
 import com.sendgrid.helpers.mail.Mail
 import com.sendgrid.helpers.mail.objects.Content
 import com.sendgrid.helpers.mail.objects.Email
+import mikaojk.github.io.model.BibleGroupMeeting
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Sheet
@@ -22,13 +23,15 @@ import kotlin.math.abs
 
 
 val log: Logger = LoggerFactory.getLogger("mikaojk.github.io")
+val dateFormatt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
 fun main() {
     val environment = Environment()
+
     val bibleGroupMeetings = fetchBibleGroupMeetingFromGoogleSheets(environment.googleSheetXlsxUrl)
     val nearestFutureBibelGroupMeeting = nearestFutureBibelGroupMeeting(bibleGroupMeetings)
-    val emails: List<String> = environment.emails.trim().split(",")
 
+    val emails: List<String> = environment.emails.trim().split(",")
     val allEmailsAreValid = checkEmails(emails)
 
     if (allEmailsAreValid && nearestFutureBibelGroupMeeting != null && isFutureBibelGroupMeetingNextWeek(nearestFutureBibelGroupMeeting.date)) {
@@ -38,13 +41,6 @@ fun main() {
     }
 
 }
-
-data class BibleGroupMeeting(
-    val date: LocalDate,
-    val who: String,
-    val address: String,
-    val theme: String,
-)
 
 fun checkEmails(emails: List<String>): Boolean {
     for (email in emails) {
@@ -138,44 +134,46 @@ fun Cell.getStringValue(): String {
     }
 }
 
+fun createHtmlContentInStringFormat(bibelgroupmeeting: BibleGroupMeeting): String {
+
+    return "<!DOCTYPE html>" +
+            "<html lang=\"no\">" +
+            "<head>" +
+            "<title>Bibelgruppe den ${bibelgroupmeeting.date.format(dateFormatt)} påminnelse</title>" +
+            "</head>" +
+            "<body>Husk at det er bibelgruppe på onsdag!" +
+            "<ul>" +
+            "<li>Dato: ${bibelgroupmeeting.date.format(dateFormatt)}</li>" +
+            "<li>Hos: ${bibelgroupmeeting.who}</li>" +
+            "<li>Adresse: ${bibelgroupmeeting.address}</li>" +
+            "<li>Kl: 19:30</li>" +
+            "<li>Tema: ${bibelgroupmeeting.theme}</li>" +
+            "</ul>" +
+            "</body>" +
+            "</html>"
+
+}
+
 fun emailNotify(sendgridApiKey: String, emailAdresss: List<String>, bibelgroupmeeting: BibleGroupMeeting) {
-
-    val dateFormatt = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-
     emailAdresss.forEach { email ->
         val from = Email("no-reply@joakim-taule-kartveit.no")
         val subject = "Bibelgruppe den ${bibelgroupmeeting.date.format(dateFormatt)} påminnelse"
         val to = Email(email)
-        val htmlContentStringFormat =
-            "<!DOCTYPE html>" +
-                    "<html lang=\"no\">" +
-                    "<head>" +
-                    "<title>Bibelgruppe den ${bibelgroupmeeting.date.format(dateFormatt)} påminnelse</title>" +
-                    "</head>" +
-                    "<body>Husk at det er bibelgruppe på onsdag!" +
-                    "<ul>" +
-                    "<li>Dato: ${bibelgroupmeeting.date.format(dateFormatt)}</li>" +
-                    "<li>Hos: ${bibelgroupmeeting.who}</li>" +
-                    "<li>Adresse: ${bibelgroupmeeting.address}</li>" +
-                    "<li>Kl: 19:30</li>" +
-                    "<li>Tema: ${bibelgroupmeeting.theme}</li>" +
-                    "</ul>" +
-                    "</body>" +
-                    "</html>"
+        val htmlContentStringFormat = createHtmlContentInStringFormat(bibelgroupmeeting)
         val content = Content(
             "text/html",
             htmlContentStringFormat
         )
         val mail = Mail(from, subject, to, content)
 
-        val sg = SendGrid(sendgridApiKey)
+        val endGrid = SendGrid(sendgridApiKey)
         val request: Request = Request().apply {
             method = Method.POST
             endpoint = "mail/send"
             body = mail.build()
         }
 
-        val response = sg.api(request)
+        val response = endGrid.api(request)
 
         if (response.statusCode != 202) {
             log.info("Something went wrong with sending the email")

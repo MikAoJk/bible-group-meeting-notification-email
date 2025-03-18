@@ -1,9 +1,11 @@
+val javaVersion = 21
+
 val kotlinVersion = "2.1.10"
 val logbackVersion= "1.5.6"
 val logstashEncoderVersion = "8.0"
 val poiVersion = "5.3.0"
 val sendgridVersion = "4.10.3"
-val junitJupiterVersion = "5.11.4"
+val junitJupiterVersion = "5.12.1"
 
 
 plugins {
@@ -19,7 +21,7 @@ application {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(javaVersion)
 }
 
 repositories {
@@ -43,12 +45,11 @@ tasks {
     withType<Test> {
         useJUnitPlatform {}
         testLogging {
+            events("passed", "skipped", "failed")
             showStandardStreams = true
             showStackTraces = true
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         }
     }
-
-
 
 }
