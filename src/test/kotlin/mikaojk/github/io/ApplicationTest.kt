@@ -1,5 +1,6 @@
 package mikaojk.github.io
 
+import mikaojk.github.io.model.BibleGroupMeeting
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
