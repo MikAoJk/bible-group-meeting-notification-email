@@ -44,7 +44,7 @@ fun main() {
 
 fun checkEmails(emails: List<String>): Boolean {
     for (email in emails) {
-        if (!validateEmail(email)) {
+        if (!validateEmailRegex(email)) {
             log.error("Invalid email: $email")
             return false
         }
@@ -52,7 +52,7 @@ fun checkEmails(emails: List<String>): Boolean {
     return true
 }
 
-fun validateEmail(email: String): Boolean {
+fun validateEmailRegex(email: String): Boolean {
     val emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$".toRegex()
 
     return emailPattern.matches(email)
@@ -77,7 +77,6 @@ fun nearestFutureBibelGroupMeeting(bibelgroupmeetings: List<BibleGroupMeeting>):
 
 
 fun fetchBibleGroupMeetingFromGoogleSheets(googleSheetXlsxUrl: String): List<BibleGroupMeeting> {
-
 
     val bibleGroupMeetingsGoogleSheetUrl =
         URI.create(googleSheetXlsxUrl)
