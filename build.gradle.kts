@@ -1,8 +1,8 @@
 val javaVersion = 21
 
-val kotlinVersion = "2.1.10"
+val kotlinVersion = "2.1.20"
 val logbackVersion= "1.5.18"
-val logstashEncoderVersion = "8.0"
+val logstashEncoderVersion = "8.1"
 val poiVersion = "5.4.1"
 val sendgridVersion = "4.10.3"
 val junitJupiterVersion = "5.12.2"
