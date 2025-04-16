@@ -5,7 +5,7 @@ val logbackVersion= "1.5.6"
 val logstashEncoderVersion = "8.0"
 val poiVersion = "5.3.0"
 val sendgridVersion = "4.10.3"
-val junitJupiterVersion = "5.12.1"
+val junitJupiterVersion = "5.12.2"
 
 
 plugins {
