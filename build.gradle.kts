@@ -10,7 +10,7 @@ val junitJupiterVersion = "5.13.1"
 
 plugins {
     id("application")
-    kotlin("jvm") version "2.1.21"
+    kotlin("jvm") version "2.2.0"
 }
 
 group = "mikaojk.github.io"
