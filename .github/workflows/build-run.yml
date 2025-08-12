@@ -17,7 +17,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Gradle wrapper validation
         uses: gradle/actions/wrapper-validation@v4
       - name: Setup gradle dependency cache
