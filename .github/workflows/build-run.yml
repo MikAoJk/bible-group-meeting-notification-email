@@ -37,5 +37,5 @@ jobs:
           GOOGLE_SHEET_XLSX_URL: ${{ secrets.GOOGLE_SHEET_XLSX_URL }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           EMAILS_TO_NOTIFY: ${{ secrets.EMAILS_TO_NOTIFY }}
-        run: |
-          ./gradlew run
+       # run: |
+      #  ./gradlew run
